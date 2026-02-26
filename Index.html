@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina | Moda & Variedades</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* --- CSS: Estilização Profissional --- */
+        :root {
+            --cor-primaria: #1a1a1a;
+            --cor-secundaria: #f4f4f5;
+            --cor-destaque: #d4af37;
+            --cor-botao: #000000;
+            --cor-texto: #333333;
+            --cor-sucesso: #2ed573;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fafafa;
+            color: var(--cor-texto);
+        }
+
+        /* Barra de Autenticação Supabase */
+        .auth-bar {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 10px 5%;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .auth-bar input {
+            padding: 5px;
+            border-radius: 4px;
+            border: none;
+            font-size: 0.8rem;
+        }
+
+        .btn-auth {
+            background: var(--cor-destaque);
+            color: black;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 0.75rem;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--cor-primaria);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .carrinho-icone {
+            font-size: 1rem;
+            font-weight: bold;
+            background: var(--cor-secundaria);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Banner Principal (Hero) */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200&q=80') center/cover;
+            color: white;
+            text-align: center;
+            padding: 4rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+        /* Layout Principal */
+        main {
+            padding: 0 5%;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .produtos-container {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .produto-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .produto-card:hover { transform: translateY(-5px); }
+        .produto-imagem { width: 100%; height: 250px; object-fit: cover; }
+        .produto-info { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .preco { font-size: 1.3rem; font-weight: bold; color: var(--cor-destaque); margin-bottom: 1rem; }
+
+        button {
+            background-color: var(--cor-botao);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        /* Carrinho Lateral */
+        .carrinho-container {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 0.8rem 0; font-size: 0.95rem; }
+
+        #total-carrinho { font-size: 1.5rem; font-weight: bold; margin: 1.5rem 0; text-align: right; }
+
+        .btn-finalizar { background-color: var(--cor-sucesso); }
+
+        @media (max-width: 768px) {
+            main { flex-direction: column; padding: 0 1rem; }
+            .carrinho-container { width: 100%; position: static; margin-bottom: 2rem; }
+            .auth-bar { flex-direction: column; gap: 8px; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-bar">
+        <div id="auth-visitante">
+            <input type="email" id="email" placeholder="E-mail">
+            <input type="password" id="senha" placeholder="Senha">
+            <button class="btn-auth" onclick="entrar()">Entrar</button>
+            <button class="btn-auth" style="background:#555; color:white;" onclick="cadastrar()">Cadastrar</button>
+        </div>
+        <div id="auth-usuario" style="display: none;">
+            Olá, <span id="user-email-display"></span> | 
+            <button class="btn-auth" style="background:#cc0000; color:white;" onclick="sair()">Sair</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">Lumina</div>
+        <div class="carrinho-icone">🛍️ <span id="contador-carrinho">0</span></div>
+    </header>
+
+    <section class="hero">
+        <h2>Coleção Premium</h2>
+        <p>Acesse sua conta para finalizar pedidos exclusivos.</p>
+    </section>
+
+    <main>
+        <section class="produtos-container" id="vitrine"></section>
+
+        <aside class="carrinho-container">
+            <h2>Sua Sacola</h2>
+            <div id="itens-carrinho">
+                <p style="color: #999; text-align: center; margin: 2rem 0;">Vazia.</p>
+            </div>
+            <div id="total-carrinho">Total: R$ 0,00</div>
+            <button class="btn-finalizar" onclick="finalizarNoWhatsapp()">📲 Finalizar Compra</button>
+        </aside>
+    </main>
+
+    <script>
+        // 1. CONFIGURAÇÃO SUPABASE (Substitua pelos seus dados do dashboard do Supabase)
+        const SB_URL = "https://fkpepnjpkzjgzlrohyva.supabase.co"; 
+        const SB_KEY = "sb_publishable_mChIWYA...M0Vx8M_a";
+        const _supabase = supabase.createClient(SB_URL, SB_KEY);
+
+        // 2. LÓGICA DE AUTENTICAÇÃO
+        async function cadastrar() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('senha').value;
+            const { error } = await _supabase.auth.signUp({ email, password });
+            if (error) alert("Erro: " + error.message);
+            else alert("Verifique seu e-mail para confirmar o cadastro!");
+        }
+
+        async function entrar() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('senha').value;
+            const { error } = await _supabase.auth.signInWithPassword({ email, password });
+            if (error) alert("Erro: " + error.message);
+        }
+
+        async function sair() {
+            await _supabase.auth.signOut();
+        }
+
+        // Observador de estado do usuário (Logado ou não)
+        _supabase.auth.onAuthStateChange((event, session) => {
+            const visitorDiv = document.getElementById('auth-visitante');
+            const userDiv = document.getElementById('auth-usuario');
+            
+            if (session) {
+                visitorDiv.style.display = 'none';
+                userDiv.style.display = 'block';
+                document.getElementById('user-email-display').innerText = session.user.email;
+            } else {
+                visitorDiv.style.display = 'block';
+                userDiv.style.display = 'none';
+            }
+        });
+
+        // 3. LÓGICA DA LOJA
+        const SEU_NUMERO_WHATSAPP = "5511999999999"; 
+        const produtos = [
+            { id: 1, nome: 'Camiseta Premium', preco: 89.90, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80' },
+            { id: 2, nome: 'Calça Jeans Skinny', preco: 159.90, img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80' },
+            { id: 3, nome: 'Jaqueta Couro', preco: 299.00, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80' },
+            { id: 4, nome: 'Tênis Urban', preco: 199.90, img: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=80' }
+        ];
+
+        let carrinho = [];
+
+        function carregarProdutos() {
+            const vitrine = document.getElementById('vitrine');
+            vitrine.innerHTML = produtos.map(p => `
+                <div class="produto-card">
+                    <img src="${p.img}" class="produto-imagem">
+                    <div class="produto-info">
+                        <h3>${p.nome}</h3>
+                        <p class="preco">R$ ${p.preco.toFixed(2).replace('.', ',')}</p>
+                        <button onclick="adicionarAoCarrinho(${p.id})">Adicionar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function adicionarAoCarrinho(id) {
+            carrinho.push(produtos.find(p => p.id === id));
+            atualizarCarrinho();
+        }
+
+        function atualizarCarrinho() {
+            const container = document.getElementById('itens-carrinho');
+            const totalE = document.getElementById('total-carrinho');
+            document.getElementById('contador-carrinho').innerText = carrinho.length;
+
+            if (carrinho.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin:2rem 0; color:#999;">Vazia.</p>';
+                totalE.innerText = 'Total: R$ 0,00';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = carrinho.map((item, i) => {
+                total += item.preco;
+                return `<div class="item-carrinho"><span>${item.nome}</span> <b>R$ ${item.preco.toFixed(2)}</b></div>`;
+            }).join('');
+            totalE.innerText = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        async function finalizarNoWhatsapp() {
+            // VERIFICAÇÃO SUPABASE: Só compra se estiver logado
+            const { data: { user } } = await _supabase.auth.getUser();
+            
+            if (!user) {
+                alert("❌ Acesso negado! Por favor, faça login ou cadastre-se para comprar.");
+                return;
+            }
+
+            if (carrinho.length === 0) return alert("Adicione produtos!");
+
+            let texto = `Pedido de: ${user.email}\n\n`;
+            carrinho.forEach(i => texto += `- ${i.nome}\n`);
+            
+            window.open(`https://wa.me/${SEU_NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
+        }
+
+        carregarProdutos();
+    </script>
+</body>
+</html>
+
