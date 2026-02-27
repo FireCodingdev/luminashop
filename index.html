@@ -5,168 +5,497 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina | Moda & Variedades</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* --- CSS: Estilização Profissional --- */
         :root {
-            --cor-primaria: #1a1a1a;
-            --cor-secundaria: #f4f4f5;
-            --cor-destaque: #d4af37;
-            --cor-botao: #000000;
-            --cor-texto: #333333;
-            --cor-sucesso: #2ed573;
+            --cor-primaria: #0f0f0f;
+            --cor-secundaria: #f7f5f2;
+            --cor-destaque: #c9a84c;
+            --cor-destaque-hover: #b8952e;
+            --cor-botao: #0f0f0f;
+            --cor-texto: #2a2a2a;
+            --cor-sucesso: #1a8a4a;
+            --cor-sucesso-bg: #25c26e;
+            --fonte-display: 'Cormorant Garamond', Georgia, serif;
+            --fonte-corpo: 'DM Sans', sans-serif;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: #fafafa;
+            background-color: var(--cor-secundaria);
             color: var(--cor-texto);
+            font-family: var(--fonte-corpo);
+            font-weight: 300;
         }
 
-        /* Barra de Autenticação Supabase */
+        /* ── Auth Bar ── */
         .auth-bar {
             background-color: var(--cor-primaria);
-            color: white;
+            color: #aaa;
             padding: 10px 5%;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .auth-bar input {
-            padding: 5px;
-            border-radius: 4px;
-            border: none;
-            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 3px;
+            border: 1px solid #333;
+            background: #1c1c1c;
+            color: white;
+            font-size: 0.78rem;
+            font-family: var(--fonte-corpo);
+            outline: none;
+            transition: var(--transition);
+            width: 150px;
         }
+
+        .auth-bar input:focus { border-color: var(--cor-destaque); }
+        .auth-bar input::placeholder { color: #555; }
 
         .btn-auth {
             background: var(--cor-destaque);
-            color: black;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-weight: bold;
+            color: #0f0f0f;
+            padding: 6px 14px;
+            border-radius: 3px;
+            font-weight: 500;
+            font-family: var(--fonte-corpo);
             cursor: pointer;
             border: none;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: var(--transition);
         }
 
-        /* Cabeçalho */
+        .btn-auth:hover { background: var(--cor-destaque-hover); }
+
+        /* ── Header ── */
         header {
             background-color: white;
-            padding: 1rem 5%;
+            padding: 1.2rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #ebebeb;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-family: var(--fonte-display);
+            font-size: 2rem;
+            font-weight: 300;
             color: var(--cor-primaria);
-            letter-spacing: 1px;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        .header-tagline {
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #999;
         }
 
         .carrinho-icone {
-            font-size: 1rem;
-            font-weight: bold;
-            background: var(--cor-secundaria);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        /* Banner Principal (Hero) */
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200&q=80') center/cover;
-            color: white;
-            text-align: center;
-            padding: 4rem 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-
-        /* Layout Principal */
-        main {
-            padding: 0 5%;
             display: flex;
-            gap: 2rem;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--fonte-corpo);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            background: var(--cor-primaria);
+            color: white;
+            padding: 0.55rem 1.1rem;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carrinho-icone:hover { background: #333; }
+
+        #contador-carrinho {
+            background: var(--cor-destaque);
+            color: #0f0f0f;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            position: relative;
+            background: linear-gradient(to right, rgba(0,0,0,0.62) 40%, rgba(0,0,0,0.1)), 
+                        url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1400&q=85') center/cover;
+            color: white;
+            padding: 6rem 8%;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 80px;
+            background: linear-gradient(to top, var(--cor-secundaria), transparent);
+        }
+
+        .hero-content { max-width: 520px; }
+
+        .hero-eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--cor-destaque);
+            margin-bottom: 1rem;
+            font-family: var(--fonte-corpo);
+            font-weight: 400;
+        }
+
+        .hero h2 {
+            font-family: var(--fonte-display);
+            font-size: 3.8rem;
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            font-style: italic;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.7;
+            max-width: 360px;
+            font-weight: 300;
+        }
+
+        .hero-divider {
+            width: 48px;
+            height: 1px;
+            background: var(--cor-destaque);
+            margin: 1.5rem 0;
+        }
+
+        /* ── Layout ── */
+        main {
+            padding: 0 5% 5rem;
+            display: flex;
+            gap: 2.5rem;
             flex-wrap: wrap;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
+        /* ── Section Header ── */
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex: 0 0 100%;
+        }
+
+        .section-title {
+            font-family: var(--fonte-display);
+            font-size: 1.8rem;
+            font-weight: 300;
+            font-style: italic;
+            color: var(--cor-primaria);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: #e0ddd8;
+        }
+
+        .section-count {
+            font-size: 0.75rem;
+            color: #aaa;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Produtos ── */
+        .produtos-wrapper { flex: 2; min-width: 0; }
+
         .produtos-container {
-            flex: 2;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 3rem;
         }
 
         .produto-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: transform 0.3s ease;
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        .produto-card:hover { transform: translateY(-5px); }
-        .produto-imagem { width: 100%; height: 250px; object-fit: cover; }
-        .produto-info { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .preco { font-size: 1.3rem; font-weight: bold; color: var(--cor-destaque); margin-bottom: 1rem; }
+        .produto-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
 
-        button {
-            background-color: var(--cor-botao);
-            color: white;
-            border: none;
-            padding: 0.8rem;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
+        .produto-imagem-wrapper {
+            position: relative;
+            overflow: hidden;
+            background: #f0ede8;
+        }
+
+        .produto-imagem {
             width: 100%;
-            text-transform: uppercase;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+            display: block;
         }
 
-        /* Carrinho Lateral */
+        .produto-card:hover .produto-imagem { transform: scale(1.05); }
+
+        .produto-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--cor-primaria);
+            color: white;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-weight: 500;
+        }
+
+        .produto-info {
+            padding: 1.2rem 1.3rem 1.3rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .produto-categoria {
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #aaa;
+            font-weight: 400;
+        }
+
+        .produto-nome {
+            font-family: var(--fonte-display);
+            font-size: 1.15rem;
+            font-weight: 400;
+            color: var(--cor-primaria);
+            line-height: 1.3;
+        }
+
+        .produto-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.4rem;
+        }
+
+        .preco {
+            font-family: var(--fonte-display);
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--cor-destaque);
+        }
+
+        .btn-add {
+            background-color: var(--cor-botao) !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.55rem 1.1rem !important;
+            border-radius: 2px !important;
+            font-weight: 500 !important;
+            font-family: var(--fonte-corpo) !important;
+            cursor: pointer !important;
+            font-size: 0.72rem !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            transition: var(--transition) !important;
+            width: auto !important;
+        }
+
+        .btn-add:hover { background: #333 !important; }
+
+        .btn-add.adicionado {
+            background: var(--cor-sucesso-bg) !important;
+        }
+
+        /* ── Carrinho ── */
         .carrinho-container {
-            flex: 1;
-            min-width: 300px;
+            flex: 0 0 320px;
             background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 4px;
+            overflow: hidden;
             height: fit-content;
             position: sticky;
-            top: 80px;
+            top: 76px;
+            border: 1px solid #ebebeb;
         }
 
-        .item-carrinho { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 0.8rem 0; font-size: 0.95rem; }
+        .carrinho-header {
+            background: var(--cor-primaria);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.8rem;
+        }
 
-        #total-carrinho { font-size: 1.5rem; font-weight: bold; margin: 1.5rem 0; text-align: right; }
+        .carrinho-header h2 {
+            font-family: var(--fonte-display);
+            font-size: 1.25rem;
+            font-weight: 300;
+            font-style: italic;
+        }
 
-        .btn-finalizar { background-color: var(--cor-sucesso); }
+        .carrinho-header-count {
+            font-size: 0.72rem;
+            color: var(--cor-destaque);
+            letter-spacing: 0.1em;
+        }
 
-        @media (max-width: 768px) {
-            main { flex-direction: column; padding: 0 1rem; }
-            .carrinho-container { width: 100%; position: static; margin-bottom: 2rem; }
+        .carrinho-body { padding: 1.2rem 1.5rem; }
+
+        #itens-carrinho {
+            min-height: 80px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #bbb;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            display: block;
+            opacity: 0.4;
+        }
+
+        .empty-state p { font-size: 0.85rem; }
+
+        .item-carrinho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f2f0ec;
+            font-size: 0.88rem;
+            animation: slideIn 0.25s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .item-carrinho span { color: var(--cor-texto); }
+        .item-carrinho b { color: var(--cor-primaria); font-weight: 500; }
+
+        .carrinho-footer {
+            padding: 1.2rem 1.5rem 1.5rem;
+            border-top: 1px solid #f2f0ec;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.2rem;
+        }
+
+        .total-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        #total-carrinho {
+            font-family: var(--fonte-display);
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--cor-primaria);
+        }
+
+        .btn-finalizar {
+            background-color: var(--cor-sucesso-bg) !important;
+            color: white !important;
+            border: none !important;
+            padding: 1rem !important;
+            border-radius: 3px !important;
+            font-weight: 500 !important;
+            font-family: var(--fonte-corpo) !important;
+            cursor: pointer !important;
+            width: 100% !important;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.1em !important;
+            text-transform: uppercase !important;
+            transition: var(--transition) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+        }
+
+        .btn-finalizar:hover { background: var(--cor-sucesso) !important; }
+
+        .security-note {
+            text-align: center;
+            font-size: 0.68rem;
+            color: #bbb;
+            margin-top: 0.8rem;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Footer ── */
+        footer {
+            background: var(--cor-primaria);
+            color: #555;
+            text-align: center;
+            padding: 2rem 5%;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+        }
+
+        footer span { color: var(--cor-destaque); }
+
+        @media (max-width: 900px) {
+            main { flex-direction: column; }
+            .carrinho-container { flex: 0 0 auto; width: 100%; position: static; }
+        }
+
+        @media (max-width: 600px) {
             .auth-bar { flex-direction: column; gap: 8px; align-items: stretch; }
+            .hero { padding: 4rem 5%; }
+            .hero h2 { font-size: 2.8rem; }
+            .header-tagline { display: none; }
         }
     </style>
 </head>
@@ -177,39 +506,76 @@
             <input type="email" id="email" placeholder="E-mail">
             <input type="password" id="senha" placeholder="Senha">
             <button class="btn-auth" onclick="entrar()">Entrar</button>
-            <button class="btn-auth" style="background:#555; color:white;" onclick="cadastrar()">Cadastrar</button>
+            <button class="btn-auth" style="background:#333; color:white;" onclick="cadastrar()">Cadastrar</button>
         </div>
         <div id="auth-usuario" style="display: none;">
-            Olá, <span id="user-email-display"></span> | 
-            <button class="btn-auth" style="background:#cc0000; color:white;" onclick="sair()">Sair</button>
+            Olá, <span id="user-email-display" style="color:white;"></span>&nbsp;
+            <button class="btn-auth" style="background:#7a1010; color:white;" onclick="sair()">Sair</button>
         </div>
     </div>
 
     <header>
         <div class="logo">Lumina</div>
-        <div class="carrinho-icone">🛍️ <span id="contador-carrinho">0</span></div>
+        <div class="header-right">
+            <span class="header-tagline">Coleção 2025</span>
+            <div class="carrinho-icone">
+                🛍️&nbsp; Sacola &nbsp;<span id="contador-carrinho">0</span>
+            </div>
+        </div>
     </header>
 
     <section class="hero">
-        <h2>Coleção Premium</h2>
-        <p>Acesse sua conta para finalizar pedidos exclusivos.</p>
+        <div class="hero-content">
+            <p class="hero-eyebrow">Nova Temporada</p>
+            <h2>Coleção<br>Premium</h2>
+            <div class="hero-divider"></div>
+            <p>Peças cuidadosamente selecionadas para quem valoriza estilo e elegância no dia a dia.</p>
+        </div>
     </section>
 
     <main>
-        <section class="produtos-container" id="vitrine"></section>
+        <div class="section-header">
+            <h3 class="section-title">Nossa Vitrine</h3>
+            <div class="section-line"></div>
+            <span class="section-count">4 Peças</span>
+        </div>
+
+        <div class="produtos-wrapper">
+            <section class="produtos-container" id="vitrine"></section>
+        </div>
 
         <aside class="carrinho-container">
-            <h2>Sua Sacola</h2>
-            <div id="itens-carrinho">
-                <p style="color: #999; text-align: center; margin: 2rem 0;">Vazia.</p>
+            <div class="carrinho-header">
+                <h2>Sua Sacola</h2>
+                <span class="carrinho-header-count" id="carrinho-count-label">Vazia</span>
             </div>
-            <div id="total-carrinho">Total: R$ 0,00</div>
-            <button class="btn-finalizar" onclick="finalizarNoWhatsapp()">📲 Finalizar Compra</button>
+            <div class="carrinho-body">
+                <div id="itens-carrinho">
+                    <div class="empty-state">
+                        <span class="empty-icon">🛍</span>
+                        <p>Sua sacola está vazia.<br>Adicione peças para continuar.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carrinho-footer">
+                <div class="total-row">
+                    <span class="total-label">Total estimado</span>
+                    <span id="total-carrinho">R$ 0,00</span>
+                </div>
+                <button class="btn-finalizar" onclick="finalizarNoWhatsapp()">
+                    📲 Finalizar no WhatsApp
+                </button>
+                <p class="security-note">🔒 Compra segura via WhatsApp</p>
+            </div>
         </aside>
     </main>
 
+    <footer>
+        <p>&copy; 2025 <span>Lumina</span> · Moda & Variedades · Todos os direitos reservados.</p>
+    </footer>
+
     <script>
-        // 1. CONFIGURAÇÃO SUPABASE (Substitua pelos seus dados do dashboard do Supabase)
+        // 1. CONFIGURAÇÃO SUPABASE
         const SB_URL = "https://fkpepnjpkzjgzlrohyva.supabase.co"; 
         const SB_KEY = "sb_publishable_mChIWYA...M0Vx8M_a";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -234,7 +600,6 @@
             await _supabase.auth.signOut();
         }
 
-        // Observador de estado do usuário (Logado ou não)
         _supabase.auth.onAuthStateChange((event, session) => {
             const visitorDiv = document.getElementById('auth-visitante');
             const userDiv = document.getElementById('auth-usuario');
@@ -252,10 +617,10 @@
         // 3. LÓGICA DA LOJA
         const SEU_NUMERO_WHATSAPP = "5511999999999"; 
         const produtos = [
-            { id: 1, nome: 'Camiseta Premium', preco: 89.90, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80' },
-            { id: 2, nome: 'Calça Jeans Skinny', preco: 159.90, img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80' },
-            { id: 3, nome: 'Jaqueta Couro', preco: 299.00, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80' },
-            { id: 4, nome: 'Tênis Urban', preco: 199.90, img: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=80' }
+            { id: 1, nome: 'Camiseta Premium', categoria: 'Casual', preco: 89.90, img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80' },
+            { id: 2, nome: 'Calça Jeans Skinny', categoria: 'Jeans', preco: 159.90, img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80' },
+            { id: 3, nome: 'Jaqueta Couro', categoria: 'Outerwear', preco: 299.00, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80' },
+            { id: 4, nome: 'Tênis Urban', categoria: 'Calçados', preco: 199.90, img: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=80' }
         ];
 
         let carrinho = [];
@@ -264,11 +629,17 @@
             const vitrine = document.getElementById('vitrine');
             vitrine.innerHTML = produtos.map(p => `
                 <div class="produto-card">
-                    <img src="${p.img}" class="produto-imagem">
+                    <div class="produto-imagem-wrapper">
+                        <img src="${p.img}" class="produto-imagem" alt="${p.nome}">
+                        <span class="produto-badge">Novo</span>
+                    </div>
                     <div class="produto-info">
-                        <h3>${p.nome}</h3>
-                        <p class="preco">R$ ${p.preco.toFixed(2).replace('.', ',')}</p>
-                        <button onclick="adicionarAoCarrinho(${p.id})">Adicionar</button>
+                        <span class="produto-categoria">${p.categoria}</span>
+                        <h3 class="produto-nome">${p.nome}</h3>
+                        <div class="produto-footer">
+                            <span class="preco">R$ ${p.preco.toFixed(2).replace('.', ',')}</span>
+                            <button class="btn-add" id="btn-${p.id}" onclick="adicionarAoCarrinho(${p.id})">+ Adicionar</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -276,30 +647,39 @@
 
         function adicionarAoCarrinho(id) {
             carrinho.push(produtos.find(p => p.id === id));
+            const btn = document.getElementById('btn-' + id);
+            if (btn) {
+                btn.textContent = '✓ Adicionado';
+                btn.classList.add('adicionado');
+                setTimeout(() => { btn.textContent = '+ Adicionar'; btn.classList.remove('adicionado'); }, 1500);
+            }
             atualizarCarrinho();
         }
 
         function atualizarCarrinho() {
             const container = document.getElementById('itens-carrinho');
             const totalE = document.getElementById('total-carrinho');
+            const countLabel = document.getElementById('carrinho-count-label');
             document.getElementById('contador-carrinho').innerText = carrinho.length;
 
             if (carrinho.length === 0) {
-                container.innerHTML = '<p style="text-align:center; margin:2rem 0; color:#999;">Vazia.</p>';
-                totalE.innerText = 'Total: R$ 0,00';
+                countLabel.innerText = 'Vazia';
+                container.innerHTML = `<div class="empty-state"><span class="empty-icon">🛍</span><p>Sua sacola está vazia.<br>Adicione peças para continuar.</p></div>`;
+                totalE.innerText = 'R$ 0,00';
                 return;
             }
 
+            countLabel.innerText = `${carrinho.length} ${carrinho.length === 1 ? 'peça' : 'peças'}`;
+
             let total = 0;
-            container.innerHTML = carrinho.map((item, i) => {
+            container.innerHTML = carrinho.map((item) => {
                 total += item.preco;
-                return `<div class="item-carrinho"><span>${item.nome}</span> <b>R$ ${item.preco.toFixed(2)}</b></div>`;
+                return `<div class="item-carrinho"><span>${item.nome}</span> <b>R$ ${item.preco.toFixed(2).replace('.',',')}</b></div>`;
             }).join('');
-            totalE.innerText = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+            totalE.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
 
         async function finalizarNoWhatsapp() {
-            // VERIFICAÇÃO SUPABASE: Só compra se estiver logado
             const { data: { user } } = await _supabase.auth.getUser();
             
             if (!user) {
@@ -319,4 +699,3 @@
     </script>
 </body>
 </html>
-
