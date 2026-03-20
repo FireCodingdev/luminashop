@@ -1,5 +1,5 @@
 # ✨ Lumina — Loja de Moda & Variedades
-
+veja: https://firecodingdev.github.io/luminashop/
 > Loja virtual moderna com autenticação via Supabase, carrinho de compras e finalização de pedidos pelo WhatsApp.
 
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
